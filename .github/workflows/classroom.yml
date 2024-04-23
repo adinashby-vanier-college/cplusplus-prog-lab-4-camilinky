@@ -1,0 +1,71 @@
+name: Autograding Tests
+'on':
+- push
+- workflow_dispatch
+- repository_dispatch
+permissions:
+  checks: write
+  actions: read
+  contents: read
+jobs:
+  run-autograding-tests:
+    runs-on: ubuntu-latest
+    if: github.actor != 'github-classroom[bot]'
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    - name: sumTest
+      id: sumtest
+      uses: education/autograding-command-grader@v1
+      with:
+        test-name: sumTest
+        setup-command: ''
+        command: make specific_test test="test1"
+        timeout: 1
+        max-score: 20
+    - name: factorialTest
+      id: factorialtest
+      uses: education/autograding-command-grader@v1
+      with:
+        test-name: factorialTest
+        setup-command: ''
+        command: make specific_test test="test2"
+        timeout: 1
+        max-score: 20
+    - name: evenNumberTest
+      id: evennumbertest
+      uses: education/autograding-command-grader@v1
+      with:
+        test-name: evenNumberTest
+        setup-command: ''
+        command: make specific_test test="test3"
+        timeout: 1
+        max-score: 20
+    - name: fibonacciTest
+      id: fibonaccitest
+      uses: education/autograding-command-grader@v1
+      with:
+        test-name: fibonacciTest
+        setup-command: ''
+        command: make specific_test test="test4"
+        timeout: 1
+        max-score: 20
+    - name: multiplicationTest
+      id: multiplicationtest
+      uses: education/autograding-command-grader@v1
+      with:
+        test-name: multiplicationTest
+        setup-command: ''
+        command: make specific_test test="test5"
+        timeout: 1
+        max-score: 20
+    - name: Autograding Reporter
+      uses: education/autograding-grading-reporter@v1
+      env:
+        SUMTEST_RESULTS: "${{steps.sumtest.outputs.result}}"
+        FACTORIALTEST_RESULTS: "${{steps.factorialtest.outputs.result}}"
+        EVENNUMBERTEST_RESULTS: "${{steps.evennumbertest.outputs.result}}"
+        FIBONACCITEST_RESULTS: "${{steps.fibonaccitest.outputs.result}}"
+        MULTIPLICATIONTEST_RESULTS: "${{steps.multiplicationtest.outputs.result}}"
+      with:
+        runners: sumtest,factorialtest,evennumbertest,fibonaccitest,multiplicationtest
